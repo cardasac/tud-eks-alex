@@ -58,12 +58,11 @@ module "eks" {
 
   cluster_name    = local.name
   cluster_version = "1.29"
-  # kms_key_administrators = ["arn:aws:iam::${var.account_id}:role/github-role"]
   kms_key_deletion_window_in_days          = 7
   vpc_id                                   = module.vpc.vpc_id
   subnet_ids                               = module.vpc.public_subnets
   cluster_endpoint_public_access           = true
-  # enable_cluster_creator_admin_permissions = true
+  enable_cluster_creator_admin_permissions = true
   access_entries = {
     github = {
       kubernetes_groups = []
