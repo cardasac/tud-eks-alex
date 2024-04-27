@@ -64,7 +64,20 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Kubernetes apply
+      - name: Kubernetes update config
         run: |
           aws eks --region eu-west-1 update-kubeconfig --name tud-eks-alex
-          kubectl apply -f hashicups/v1/
+      - name: Kubernetes apply apps
+        run: kubectl apply -f apps/v1/
+      - name: Kubernetes apply intentions
+        run: kubectl apply -f apps/intentions/
+      - name: Kubernetes apply auth
+        run: kubectl apply -f apps/v2/
+      - name: Kubernetes apply proxy
+        run: kubectl apply -f proxy/
+      - name: Kubernetes apply api gateway
+        run: |
+          kubectl apply --filename api-gw/consul-api-gateway.yaml --namespace consul && \
+          kubectl wait --for=condition=accepted gateway/api-gateway --namespace consul --timeout=90s && \
+          kubectl apply --filename api-gw/routes.yaml --namespace consul && \
+          kubectl apply --filename api-gw/intentions.yaml --namespace consul
