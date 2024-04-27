@@ -63,26 +63,26 @@ module "eks" {
   subnet_ids                               = module.vpc.public_subnets
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
-  access_entries = {
-    github = {
-      kubernetes_groups = []
-      principal_arn     = data.aws_iam_role.github_role.arn
+  # access_entries = {
+  #   github = {
+  #     kubernetes_groups = []
+  #     principal_arn     = data.aws_iam_role.github_role.arn
 
-      policy_associations = {
-        admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-          admin_cluster = {
-            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-            access_scope = {
-              type = "cluster"
-            }
-          }
-        }
-      }
-    }
+  #     policy_associations = {
+  #       admin = {
+  #         policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  #         access_scope = {
+  #           type = "cluster"
+  #         }
+  #         admin_cluster = {
+  #           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  #           access_scope = {
+  #             type = "cluster"
+  #           }
+  #         }
+  #       }
+  #     }
+  #   }
   }
 
   eks_managed_node_group_defaults = {
