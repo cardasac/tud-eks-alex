@@ -11,8 +11,8 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 9090
-      targetPort: 9090
+      port: 8080
+      targetPort: 8080
   selector:
     app: product-api
 ---
@@ -30,19 +30,6 @@ metadata:
   namespace: default
 spec:
   protocol: "http"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: db-configmap
-  namespace: default
-data:
-  config: |
-    {
-      "db_connection": "host=product-api-db port=5432 user=postgres password=password dbname=products sslmode=disable",
-      "bind_address": ":9090",
-      "metrics_address": ":9103"
-    }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -64,32 +51,20 @@ spec:
         consul.hashicorp.com/connect-inject: "true"
     spec:
       serviceAccountName: product-api
-      volumes:
-        - name: config
-          configMap:
-            name: db-configmap
-            items:
-              - key: config
-                path: conf.json
       containers:
         - name: product-api
-          image: hashicorpdemoapp/product-api:v0.0.22
-          imagePullPolicy: IfNotPresent
+          image: 346424633902.dkr.ecr.eu-west-1.amazonaws.com/backend:latest
           ports:
-            - containerPort: 9090
-            - containerPort: 9103
+            - containerPort: 8080
           env:
-            - name: "CONFIG_FILE"
-              value: "/config/conf.json"
+            - name: DB_URI
+              value: "host=product-api-db port=5432 user=postgres password=password dbname=products sslmode=disable"
           livenessProbe:
             httpGet:
-              path: /health
-              port: 9090
+              path: /
+              port: 8080
             initialDelaySeconds: 15
             timeoutSeconds: 1
             periodSeconds: 10
             failureThreshold: 30
-          volumeMounts:
-            - name: config
-              mountPath: /config
-              readOnly: true
+

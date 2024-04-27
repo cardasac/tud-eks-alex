@@ -1,3 +1,7 @@
+locals {
+  name = "tud-eks-alex"
+}
+
 data "aws_availability_zones" "available" {
   state = "available"
 
@@ -18,7 +22,7 @@ module "vpc" {
 
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
-  # map_public_ip_on_launch = true
+  map_public_ip_on_launch = true
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
@@ -35,11 +39,13 @@ module "vpc" {
 }
 
 data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_name
+  name       = module.eks.cluster_name
+  depends_on = [module.eks]
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_name
+  name       = module.eks.cluster_name
+  depends_on = [module.eks]
 }
 
 module "eks" {
@@ -119,7 +125,7 @@ resource "aws_eks_addon" "ebs-csi" {
   addon_version            = "v1.30.0-eksbuild.1"
   service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
   tags = {
-    "EksAddon" = "ebs-csi"
+    "EksAddon"  = "ebs-csi"
     "Terraform" = "true"
   }
 }
@@ -127,9 +133,11 @@ resource "aws_eks_addon" "ebs-csi" {
 resource "aws_ecr_repository" "frontend" {
   name                 = "frontend"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 }
 
 resource "aws_ecr_repository" "backend" {
   name                 = "backend"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 }

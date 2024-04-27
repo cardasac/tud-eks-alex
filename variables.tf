@@ -1,9 +1,3 @@
-variable "name" {
-  description = "Tutorial name"
-  type        = string
-  default     = "tud-eks-alex"
-}
-
 variable "vpc_region" {
   type        = string
   description = "The AWS region to create resources in"
@@ -20,8 +14,4 @@ resource "random_string" "suffix" {
   length  = 4
   special = false
   upper   = false
-}
-
-locals {
-  name = "${var.name}-${random_string.suffix.result}"
 }

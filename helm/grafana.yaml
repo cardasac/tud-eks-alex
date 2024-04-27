@@ -812,7 +812,7 @@ dashboards:
                         "type": "loki",
                         "uid": "P8E80F9AEF21F6940"
                       },
-                      "expr": "{app=~\"frontend|nginx|payments|product-api|product-api-db|public-api\"}",
+                      "expr": "{app=~\"frontend|nginx|product-api|product-api-db\"}",
                       "refId": "A"
                     }
                   ],
