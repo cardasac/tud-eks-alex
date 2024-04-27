@@ -20,12 +20,12 @@ module "vpc" {
   cidr = "10.0.0.0/16"
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
 
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  private_subnets         = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets          = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   map_public_ip_on_launch = true
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
+  enable_nat_gateway      = true
+  single_nat_gateway      = true
+  enable_dns_hostnames    = true
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
@@ -48,12 +48,16 @@ data "aws_eks_cluster_auth" "cluster" {
   depends_on = [module.eks]
 }
 
+data "aws_caller_identity" "current" {}
+
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19"
 
-  cluster_name    = local.name
-  cluster_version = "1.29"
+  cluster_name           = local.name
+  cluster_version        = "1.29"
+  kms_key_administrators = [data.aws_caller_identity.current.arn]
 
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.public_subnets
