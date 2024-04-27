@@ -48,20 +48,43 @@ data "aws_eks_cluster_auth" "cluster" {
   depends_on = [module.eks]
 }
 
-data "aws_caller_identity" "current" {}
-
+data "aws_iam_role" "github_role" {
+  name = "github-role"
+}
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19"
+  version = ">= 20.1.0"
 
-  cluster_name           = local.name
-  cluster_version        = "1.29"
-  kms_key_administrators = [data.aws_caller_identity.current.arn]
+  cluster_name    = local.name
+  cluster_version = "1.29"
+  # kms_key_administrators = ["arn:aws:iam::${var.account_id}:role/github-role"]
+  kms_key_deletion_window_in_days          = 7
+  vpc_id                                   = module.vpc.vpc_id
+  subnet_ids                               = module.vpc.public_subnets
+  cluster_endpoint_public_access           = true
+  # enable_cluster_creator_admin_permissions = true
+  access_entries = {
+    github = {
+      kubernetes_groups = []
+      principal_arn     = data.aws_iam_role.github_role.arn
 
-  vpc_id                         = module.vpc.vpc_id
-  subnet_ids                     = module.vpc.public_subnets
-  cluster_endpoint_public_access = true
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+          admin_cluster = {
+            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+            access_scope = {
+              type = "cluster"
+            }
+          }
+        }
+      }
+    }
+  }
 
   eks_managed_node_group_defaults = {
     ami_type = "AL2_x86_64"
