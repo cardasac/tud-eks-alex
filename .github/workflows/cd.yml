@@ -67,4 +67,4 @@ jobs:
       - name: Kubernetes apply
         run: |
           aws eks --region eu-west-1 update-kubeconfig --name tud-eks-alex
-          kubectl apply
+          kubectl apply -f hashicups/v1/
