@@ -109,6 +109,13 @@ spec:
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "50Mi"
       volumes:
         - name: nginx-config
           configMap:
