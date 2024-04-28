@@ -10,7 +10,7 @@ export async function createProduct(
   console.log(data)
 
   try {
-    await fetch(`http://localhost:8080/${data["product"]}`, {method: "POST"}).then(response => response.text());
+    await fetch(`http://${process.env.PRODUCT_API}:8080/${data["product"]}`, {method: "POST", cache: 'no-store'}).then(response => response.text());
 
     revalidatePath("/");
     return { message: `Added product ${data.product}` };
@@ -30,7 +30,7 @@ export async function deleteProduct(
   console.log(data)
 
   try {
-    await fetch(`http://localhost:8080/${data["id"]}`, {method: "DELETE"}).then(response => response.text());
+    await fetch(`http://${process.env.PRODUCT_API}:8080/${data["id"]}`, {method: "DELETE", cache: 'no-store'}).then(response => response.text());
 
     revalidatePath("/");
     return { message: `Deleted product ${data.text}` };

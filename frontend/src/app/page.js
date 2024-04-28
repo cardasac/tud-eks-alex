@@ -20,7 +20,8 @@ export default async function Page() {
 }
 
 async function getData() {
-  const res = await fetch(`http://localhost:8080`, {method: "GET"})
+  process.env.PRODUCT_API
+  const res = await fetch(`http://${process.env.PRODUCT_API}:8080`, {method: "GET", cache: 'no-store'})
 
   if (!res.ok) {
     throw new Error('Failed to fetch data')

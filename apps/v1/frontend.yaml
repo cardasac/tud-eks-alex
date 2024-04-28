@@ -58,3 +58,5 @@ spec:
           env:
             - name: NEXT_PUBLIC_PUBLIC_API_URL
               value: "/"
+            - name: PRODUCT_API
+              value: "product-api"
