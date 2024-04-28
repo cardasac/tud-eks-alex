@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
-import { deleteTodo } from "@/app/actions";
+import { deleteProduct } from "@/app/actions";
 
 const initialState = {
   message: "",
@@ -17,13 +17,13 @@ function DeleteButton() {
   );
 }
 
-export function DeleteForm({ id, todo }) {
-  const [state, formAction] = useFormState(deleteTodo, initialState);
+export function DeleteForm({ id, text }) {
+  const [state, formAction] = useFormState(deleteProduct, initialState);
 
   return (
     <form action={formAction}>
       <input type="hidden" name="id" value={id} />
-      <input type="hidden" name="todo" value={todo} />
+      <input type="hidden" name="text" value={text} />
       <DeleteButton />
       <p aria-live="polite" className="sr-only" role="status">
         {state?.message}

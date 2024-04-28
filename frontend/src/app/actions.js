@@ -2,49 +2,39 @@
 
 import { revalidatePath } from "next/cache";
 
-// CREATE TABLE todos (
-//   id SERIAL PRIMARY KEY,
-//   text TEXT NOT NULL
-// );
-
-export async function createTodo(
+export async function createProduct(
   prevState,
   formData,
 ) {
-  const data = {todo: formData.get("todo")};
+  const data = {product: formData.get("product")};
   console.log(data)
 
   try {
-    await sql`
-      INSERT INTO todos (text)
-      VALUES (${data.todo})
-    `;
+    await fetch(`http://localhost:8080/${data["product"]}`, {method: "POST"}).then(response => response.text());
 
     revalidatePath("/");
-    return { message: `Added todo ${data.todo}` };
+    return { message: `Added product ${data.product}` };
   } catch (e) {
-    return { message: "Failed to create todo" };
+    return { message: "Failed to create product" };
   }
 }
 
-export async function deleteTodo(
+export async function deleteProduct(
   prevState,
   formData,
 ) {
   const data = {
     id: formData.get("id"),
-    todo: formData.get("todo"),
+    text: formData.get("text"),
   };
+  console.log(data)
 
   try {
-    await sql`
-      DELETE FROM todos
-      WHERE id = ${data.id};
-    `;
+    await fetch(`http://localhost:8080/${data["id"]}`, {method: "DELETE"}).then(response => response.text());
 
     revalidatePath("/");
-    return { message: `Deleted todo ${data.todo}` };
+    return { message: `Deleted product ${data.text}` };
   } catch (e) {
-    return { message: "Failed to delete todo" };
+    return { message: "Failed to delete product" };
   }
 }
