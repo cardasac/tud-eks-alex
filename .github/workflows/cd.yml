@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   tf-apply-infrastructure:
+    concurrency:
+      group: tf-apply-infrastructure
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
