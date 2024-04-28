@@ -22,7 +22,7 @@ export function AddForm() {
 
   return (
     <form action={formAction}>
-      <label htmlFor="product">Enter Task</label>
+      <label htmlFor="product">Enter Product</label>
       <input type="text" id="product" name="product" required />
       <SubmitButton />
       <p aria-live="polite" className="sr-only" role="status">
